@@ -1,0 +1,6 @@
+include "empty.inc"
+
+define empty_model model
+(
+   # parameters
+)

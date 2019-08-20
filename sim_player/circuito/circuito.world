@@ -1,0 +1,15 @@
+include "circuito.inc"
+include "robot.inc"
+
+window
+(
+    size [900 500]
+)
+
+bigbob
+(
+    name "bob"
+    pose [0 4 0 45]
+    color "blue"
+)
+
