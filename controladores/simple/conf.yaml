@@ -13,7 +13,7 @@ robot:
   name: 'bob'
   host: 'localhost'
   port: 6665
-  start_pos: !!python/tuple [0,4,0]
+  start_pos: !!python/tuple [-3,4,180]
   target: !!python/tuple [11,-6]
   sonars:
     - 0
@@ -31,5 +31,5 @@ robot:
 simple_algorithm:
   delta_t: 0.2
   sensor_count: 9
-  bubble_boundary: [ 50, 50, 50, 50, 50, 50, 50, 50, 50 ]
-  default_speed: 0.2
+  bubble_boundary: [ 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0 ]
+  default_speed: 0.5

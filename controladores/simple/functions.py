@@ -37,23 +37,29 @@ class SimpleRobot(Robot):
             self.read()
             if self.obstacle_in_bubble():
                 self.avoid_obstacle()
-            self.move_to_goal()
+            else:
+                self.move_to_goal()
             sleep(self.delta_t)
+        print("TARGET REACHED!")
 
 
     def avoid_obstacle(self):
-        while not self.goal_visible():
-            deg_alpha = self.get_rebound_angle()
-            self.set_vel(self.default_speed*0.6,deg2rad(deg_alpha))
-            self.read()
+        #while not self.goal_visible():
+        print("avoiding")
+        self.read()
+        deg_alpha = self.get_rebound_angle()
+        self.set_vel(self.default_speed*0.6,deg2rad(deg_alpha))
+        #sleep(self.delta_t)
 
     def get_rebound_angle(self):
-        alpha = 180/len(self.sensor_count)
-        numerator = sum(list(map(lambda i:alpha*i*self.sonars[0].ranges[i],
-                                    range(-a//2+1,a//2+1))))
-        denominator = 0
-        for i in range(0,self.sensor_count):
-            denominator = denominator + self.sonars[0].ranges[i]
+        alpha   = 180/self.sensor_count
+        alpha_i = list(map(lambda i: alpha*i,\
+                    range(-self.sensor_count//2+1,self.sensor_count//2+1)))
+        numerator = sum(map(lambda i: alpha_i[i]*self.sonars[0].ranges[i],\
+                                    range(self.sensor_count)))
+        denominator = sum(map(lambda i: self.sonars[0].ranges[i],
+                                    range(self.sensor_count)))
+        print("girando "+str(numerator/denominator))
         return numerator/denominator
 
 
@@ -65,20 +71,32 @@ class SimpleRobot(Robot):
         self.position.set_cmd_vel(speed,0,yaw,1)
 
     def goal_visible(self):
-        yaw    = self.get_goal_direction()
-        sector = int(yaw / (180/self.sensor_count)) # TODO: revisar para formular mejor xq tiene error
-        sector = sector + (self.sensor_count//2) #convierto el rango de  [4,-4] a [0,8] para indexar una lista
-        return True if self.sonars[0].ranges[sector] >= \
-                        self.sonars[0].max_range else False
+        return NotImplemented
+        # TODO: corregir xq no funciona bien con el algoritmo
+        return not self.obstacle_in_bubble
+        _ ,yaw = self.get_goal_direction()
+        if yaw > 90 or yaw < -90:
+            print("target sector out of bounds")
+            return False
+        sector = int(yaw+90 / (180/self.sensor_count)) # TODO: revisar para formular mejor xq tiene error
+        if self.sonars[0].ranges[sector] >= 2.5: #TODO: corregir bubble harcodded
+            print("goal visible-sector "+str(sector))
+            print("dist "+str(self.sonars[0].ranges[sector]))
+            return True
+        else:
+            return False
+
 
     def target_reached(self):
-        return False
+        rho,_ = self.get_goal_direction()
+        return True if rho <= 0.2 else False
 
     def obstacle_in_bubble(self, sonars_index=0):
         V = self.get_abs_vel()
-        bubble_boundary = list(map(lambda Ki: Ki*V*self.delta_t, self.bubble))
+        bubble_boundary = self.bubble#list(map(lambda Ki: Ki*V*self.delta_t, self.bubble))
         sonar_readings  = self.sonars[sonars_index].ranges
         for i in range(0,len(bubble_boundary)):
             if sonar_readings[i] <= bubble_boundary[i]:
+                print('obstaculo!!')
                 return True
         return False

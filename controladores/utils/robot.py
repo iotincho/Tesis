@@ -101,19 +101,32 @@ class Robot():
         return sqrt(self.position.vx**2 + self.position.vy**2)
 
     def move_to_goal(self):
-        dyaw = self.get_goal_direction()
+        _,dyaw = self.get_goal_direction()
         self.set_vel(self.default_speed,dyaw)
 
     def get_goal_direction(self):
-        """@return angle in radians of the direction
-                   to goal from the robot nose
+        """@return tuple(rho,theta)
+                    - thetha : angle in radians of the direction
+                                to goal from the robot nose
+                    - rho : distance to goal
         """
         dx   = self.target.x-self.position.px
         dy   = self.target.y-self.position.py
-        dyaw = arctan2(dy, dx)-self.position.pa
-        return dyaw
+        rho,phi = cart2pol(dx,dy)
+        dyaw = phi-self.position.pa #theta
+        return rho,dyaw
 
     class Coordinate2d():
         x   = None
         y   = None
         yaw = None
+
+def cart2pol(x, y):
+    rho = sqrt(x**2 + y**2)
+    phi = arctan2(y, x)
+    return(rho, phi)
+
+def pol2cart(rho, phi):
+    x = rho * cos(phi)
+    y = rho * sin(phi)
+    return(x, y)
