@@ -1,0 +1,34 @@
+include "simple.inc"
+include "robot.inc"
+
+window
+(
+    size [900 500]
+)
+
+robot_base
+(
+    name "bob"
+    # yaw inicial debe ser 0 para que funcione con el simulador
+    # la pose se configura directamente en el archivo de configuracion yaml
+    pose [0 0 0 0]
+    color "blue"
+)
+define target model
+(
+                  # a carton is rectangular
+                  # so make a square shape and use size[]
+                  block
+                  (
+                                         points 4
+                                         point[0] [1 0]
+                                         point[1] [1 1]
+                                         point[2] [0 1]
+                                         point[3] [0 0]
+                                         z [1.5 1.51]
+                  )
+
+                  size [0.1 0.1 1]
+                  color "DarkBlue"
+)
+target(name "target" pose [0.0 1.0 0.0 0.0])
